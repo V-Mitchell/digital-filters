@@ -1,6 +1,8 @@
 #include <Eigen/Dense>
 #include <chrono>
 #include <ctime>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 
 class KalmanFilter
@@ -71,6 +73,10 @@ int main(int argc, char **argv)
 {
     std::cout << "Kalman Filter Test" << std::endl;
     std::srand(std::time(0));
+    std::filesystem::create_directory("log");
+    std::ofstream log_file;
+    log_file.open("log/output.csv");
+
     Eigen::MatrixXd A{
         {1.0, 0.0}, //
         {0.0, 1.0}, //
@@ -129,6 +135,7 @@ int main(int argc, char **argv)
             KF.filter(z, R, t, x, P);
             std::cout << "elapsed time " << t << " measurement " << measurement << " filter "
                       << x(0, 0) << std::endl;
+            log_file << t << "," << measurement << "," << x(0, 0) << "\n";
         }
         else
         {
@@ -140,5 +147,6 @@ int main(int argc, char **argv)
         t_previous = t;
     }
 
+    log_file.close();
     return 0;
 }
