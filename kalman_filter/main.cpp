@@ -28,7 +28,6 @@ class KalmanFilter
     {
         const double dt = t - _t;
         _A(0, 1) = dt;
-        // _A(1, 3) = dt;
         const Eigen::MatrixXd xp = _A * _x;
         Eigen::MatrixXd Pp = _A * _P * _A.transpose() + _Q;
         _K = Pp * _H.transpose() * (_H * Pp * _H.transpose() + R).inverse();
