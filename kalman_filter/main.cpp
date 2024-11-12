@@ -1,67 +1,10 @@
+#include "src/KalmanFilter.hpp"
 #include <Eigen/Dense>
 #include <chrono>
 #include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
-class KalmanFilter
-{
-  public:
-    KalmanFilter(const Eigen::MatrixXd &A, const Eigen::MatrixXd &H, const Eigen::MatrixXd &Q)
-    {
-        _A = A;
-        _H = H;
-        _Q = Q;
-    }
-    ~KalmanFilter() = default;
-
-    void initialize(const Eigen::MatrixXd &x, const Eigen::MatrixXd &P, const double &t)
-    {
-        _x = x;
-        _P = P;
-        _t = t;
-    }
-
-    void filter(const Eigen::MatrixXd &z, const Eigen::MatrixXd &R, const double &t,
-                Eigen::MatrixXd &x, Eigen::MatrixXd &P)
-    {
-        const double dt = t - _t;
-        _A(0, 1) = dt;
-        const Eigen::MatrixXd xp = _A * _x;
-        Eigen::MatrixXd Pp = _A * _P * _A.transpose() + _Q;
-        _K = Pp * _H.transpose() * (_H * Pp * _H.transpose() + R).inverse();
-        _x = xp + _K * (z - _H * xp);
-        _P = Pp - _K * _H * Pp;
-
-        x = _x;
-        P = _P;
-    }
-
-  private:
-    double _t;
-    Eigen::MatrixXd _x;
-    Eigen::MatrixXd _P;
-    Eigen::MatrixXd _A;
-    Eigen::MatrixXd _H;
-    Eigen::MatrixXd _R;
-    Eigen::MatrixXd _Q;
-    Eigen::MatrixXd _K;
-};
-
-class ExtendedKalmanFilter
-{
-  public:
-    ExtendedKalmanFilter();
-    ~ExtendedKalmanFilter();
-};
-
-class UnscentedKalmanFilter
-{
-  public:
-    UnscentedKalmanFilter();
-    ~UnscentedKalmanFilter();
-};
 
 static constexpr double MEASUREMENT_TIME = 15.0;
 static constexpr double MEASUREMENT_PERIOD = 0.1;
@@ -85,7 +28,7 @@ int main(int argc, char **argv)
         {10.0, 0.0}, //
         {0.0, 25.0}, //
     };
-    KalmanFilter KF(A, H, Q);
+    KalmanFilter::KalmanFilter KF(A, H, Q);
 
     const auto start = std::chrono::system_clock::now();
     int num_measurements = 0;
