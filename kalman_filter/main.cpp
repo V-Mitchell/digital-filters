@@ -5,11 +5,13 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <math.h>
 
 static constexpr double MEASUREMENT_TIME = 15.0;
 static constexpr double MEASUREMENT_PERIOD = 0.1;
 static constexpr double SIGNAL_AMPLITUDE = 100.0;
-static constexpr double BACKGROUND_NOISE = 5.0;
+static constexpr double SINE_PERIOD_2 = 3.0;
+static constexpr double BACKGROUND_NOISE = 10.0;
 
 int main(int argc, char **argv)
 {
@@ -25,8 +27,8 @@ int main(int argc, char **argv)
     };
     Eigen::MatrixXd H{{1.0, 0.0}};
     Eigen::MatrixXd Q{
-        {10.0, 0.0}, //
-        {0.0, 25.0}, //
+        {1.0, 0.0}, //
+        {0.0, 2.5}, //
     };
     KalmanFilter::KalmanFilter KF(A, H, Q);
 
@@ -50,8 +52,8 @@ int main(int argc, char **argv)
                 std::chrono::duration_cast<std::chrono::milliseconds>(timestamp - start).count()) /
             1000.0;
 
-        const double signal_gt = SIGNAL_AMPLITUDE * t / MEASUREMENT_TIME;
-        const double error = static_cast<double>(std::rand() % 1000) * BACKGROUND_NOISE / 1000.0;
+        const double signal_gt = SIGNAL_AMPLITUDE * std::sin(M_PI * t / SINE_PERIOD_2);
+        const double error = BACKGROUND_NOISE * static_cast<double>(std::rand() % 1000) / 1000.0;
         const double measurement = signal_gt + error;
 
         if (num_measurements == 1)
