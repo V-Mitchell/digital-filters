@@ -35,8 +35,8 @@ int main(int argc, char **argv)
         {0.0}, //
         {0.0}, //
     };
-    Eigen::VectorXd Y(X.cols());
-    FIRFilter::FIRFilter FIR(5, B, X);
+    Eigen::VectorXd y(X.cols());
+    FIRFilter::FIRFilter FIR(B, X);
 
     std::default_random_engine generator;
     std::normal_distribution<double> dist(ERROR_MEAN, ERROR_STD);
@@ -61,12 +61,12 @@ int main(int argc, char **argv)
         const double error = dist(generator);
         const double measurement = signal_gt + error;
 
-        Eigen::VectorXd x0{{measurement}};
-        FIR.filter(x0, Y);
+        Eigen::VectorXd xn{{measurement}};
+        FIR.filter(xn, y);
 
-        std::cout << "elapsed time " << t << " measurement " << measurement << " filter " << Y(0)
+        std::cout << "elapsed time " << t << " measurement " << measurement << " filter " << y(0)
                   << std::endl;
-        log_file << t << "," << measurement << "," << Y(0) << "\n";
+        log_file << t << "," << measurement << "," << y(0) << "\n";
     }
 
     log_file.close();
