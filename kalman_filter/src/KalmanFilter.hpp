@@ -28,20 +28,6 @@ class KalmanFilter
     Eigen::MatrixXd _K;
 };
 
-class ExtendedKalmanFilter
-{
-  public:
-    ExtendedKalmanFilter();
-    ~ExtendedKalmanFilter() = default;
-};
-
-class UnscentedKalmanFilter
-{
-  public:
-    UnscentedKalmanFilter();
-    ~UnscentedKalmanFilter() = default;
-};
-
 } // namespace KalmanFilter
 
 #endif
